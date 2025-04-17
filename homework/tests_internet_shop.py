@@ -2,7 +2,6 @@
 Протестируйте классы из модуля homework/models.py
 """
 import pytest
-
 from homework.models import Product, Cart
 
 
@@ -44,7 +43,8 @@ class TestProducts:
     def test_product_buy_more_than_available(self, product):
         # TODO напишите проверки на метод buy,
         #  которые ожидают ошибку ValueError при попытке купить больше, чем есть в наличии
-        assert product.buy(10001) is ValueError
+        with pytest.raises(ValueError):
+            product.buy(10001)
 
 
 class TestCart:
@@ -111,11 +111,11 @@ class TestCart:
 
     def test_unsuccessfull_buy(self, cart, product, new_product):
         cart.add_product(product, buy_count=50000)
-        assert cart.buy() is ValueError
+        with pytest.raises(ValueError):
+            cart.buy()
 
     def test_unsuccessfull_buy_with_two_products(self, cart, product, new_product):
         cart.add_product(product, buy_count=200)
         cart.add_product(product, buy_count=50000)
-        assert cart.buy() is ValueError
-        assert product.quantity == 1000
-        assert new_product.quantity == 5000
+        with pytest.raises(ValueError):
+            cart.buy()

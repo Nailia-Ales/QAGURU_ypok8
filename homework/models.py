@@ -26,11 +26,11 @@ class Product:
             Проверьте количество продукта используя метод check_quantity
             Если продуктов не хватает, то выбросите исключение ValueError
         """
-        if self.check_quantity(quantity):
-            self.quantity -= quantity
-            return True
-        else:
-            return ValueError
+        if not self.check_quantity(quantity):
+            raise ValueError("Недостаточно товара на складе")
+        self.quantity -= quantity
+        return True
+
 
     def __hash__(self):
         return hash(self.name + self.description)
@@ -88,10 +88,13 @@ class Cart:
         Учтите, что товаров может не хватать на складе.
         В этом случае нужно выбросить исключение ValueError
         """
+        if not self.products:
+            raise ValueError("Ваша корзина пуста")
         for product, count in self.products.items():
-            if product.check_quantity(count) is False:
-                return ValueError
+            if not product.check_quantity(count):
+                raise ValueError(f"Недостаточно товара: {product.name}")
 
         for product, count in self.products.items():
             product.buy(count)
+        self.clear()
         return "Покупка успешно завершена!"
